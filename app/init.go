@@ -17,7 +17,8 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	defer session.Close()
+	// defer session.Close()
+
 	mf := filters.InitMongoFilter(session)
 	lf := filters.InitLogFilter()
 	cf := new(marmoset.ContextFilter)
