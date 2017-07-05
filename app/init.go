@@ -24,7 +24,7 @@ func init() {
 	cf := new(marmoset.ContextFilter)
 
 	unauthorized := marmoset.NewRouter()
-	unauthorized.GET("/v0/status", v0.Status)
+	unauthorized.GET("/0/status", v0.Status)
 
 	authorized := marmoset.NewRouter()
 	authorized.Apply(filters.InitializeAuthFilter())
