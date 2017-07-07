@@ -26,3 +26,9 @@ func (f *MongoFilter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer session.Close()
 	f.Next.ServeHTTP(w, r)
 }
+
+// MongoSession ...
+func MongoSession(req *http.Request) *mgo.Session {
+	// TODO: nil check
+	return marmoset.Context().Get(req).Value(mongoSessionKey).(*mgo.Session)
+}

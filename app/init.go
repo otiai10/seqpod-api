@@ -21,16 +21,20 @@ func init() {
 
 	mf := filters.InitMongoFilter(session)
 	lf := filters.InitLogFilter()
+	af := filters.InitializeAuthFilter()
 	cf := new(marmoset.ContextFilter)
 
 	unauthorized := marmoset.NewRouter()
 	unauthorized.GET("/v0/status", v0.Status)
 
 	authorized := marmoset.NewRouter()
-	authorized.Apply(filters.InitializeAuthFilter())
+	authorized.GET("/v0/jobs/(?P<id>[0-9a-f]+)", v0.JobGet)
+	authorized.POST("/v0/jobs/(?P<id>[0-9a-f]+)/fastq", v0.JobFastqUpload)
+	authorized.POST("/v0/jobs/workspace", v0.JobWorkspace)
+	authorized.Apply(cf, af, mf)
 
 	root := marmoset.NewRouter()
-	root.Apply(lf, mf, cf)
+	root.Apply(lf)
 	root.Subrouter(unauthorized)
 	root.Subrouter(authorized)
 	http.Handle("/", root)
