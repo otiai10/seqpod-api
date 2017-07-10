@@ -30,6 +30,7 @@ func init() {
 	authorized := marmoset.NewRouter()
 	authorized.GET("/v0/jobs/(?P<id>[0-9a-f]+)", v0.JobGet)
 	authorized.POST("/v0/jobs/(?P<id>[0-9a-f]+)/fastq", v0.JobFastqUpload)
+	authorized.POST("/v0/jobs/(?P<id>[0-9a-f]+)/ready", v0.JobMarkReady)
 	authorized.POST("/v0/jobs/workspace", v0.JobWorkspace)
 	authorized.Apply(cf, af, mf)
 

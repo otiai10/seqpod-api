@@ -129,3 +129,40 @@ func JobGet(w http.ResponseWriter, r *http.Request) {
 		"job": job,
 	})
 }
+
+// JobMarkReady ...
+func JobMarkReady(w http.ResponseWriter, r *http.Request) {
+
+	render := marmoset.Render(w)
+	sess := filters.MongoSession(r)
+
+	id := r.FormValue("id")
+	job := new(models.Job)
+	if err := models.Jobs(sess).FindId(bson.ObjectIdHex(id)).One(job); err != nil {
+		if err == mgo.ErrNotFound {
+			render.JSON(http.StatusNotFound, marmoset.P{
+				"message": err.Error(),
+			})
+			return
+		}
+		render.JSON(http.StatusInternalServerError, marmoset.P{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if err := models.Jobs(sess).UpdateId(job.ID, bson.M{
+		"$set": bson.M{"status": models.Ready},
+	}); err != nil {
+		render.JSON(http.StatusInternalServerError, marmoset.P{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// ReFetch
+	models.Jobs(sess).FindId(job.ID).One(job)
+	render.JSON(http.StatusOK, marmoset.P{
+		"job": job,
+	})
+}
