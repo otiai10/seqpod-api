@@ -11,6 +11,7 @@ import (
 
 	"github.com/otiai10/fastpot-api/filters"
 	"github.com/otiai10/fastpot-api/models"
+	"github.com/otiai10/fastpot-api/worker"
 	"github.com/otiai10/marmoset"
 )
 
@@ -165,4 +166,6 @@ func JobMarkReady(w http.ResponseWriter, r *http.Request) {
 	render.JSON(http.StatusOK, marmoset.P{
 		"job": job,
 	})
+
+	go worker.Enqueue(job)
 }
