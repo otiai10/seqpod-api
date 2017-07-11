@@ -12,6 +12,7 @@ services:
       - mongodb
     depends_on:
       - mongodb
+    restart: unless-stopped
   mongodb:
     image: mongo:3.0
     container_name: mongodb
