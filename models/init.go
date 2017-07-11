@@ -6,8 +6,8 @@ var dbname string
 
 func init() {
 	if os.Getenv("GO_ENV") == "production" {
-		dbname = "fastpot_production"
+		dbname = "seqpod_production"
 	} else {
-		dbname = "fastpot_dev"
+		dbname = "seqpod_dev"
 	}
 }

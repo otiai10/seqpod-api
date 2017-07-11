@@ -6,9 +6,9 @@ import (
 
 	"gopkg.in/mgo.v2"
 
-	"github.com/otiai10/fastpot-api/controllers/v0"
-	"github.com/otiai10/fastpot-api/filters"
 	"github.com/otiai10/marmoset"
+	"github.com/otiai10/seqpod-api/controllers/v0"
+	"github.com/otiai10/seqpod-api/filters"
 )
 
 func init() {

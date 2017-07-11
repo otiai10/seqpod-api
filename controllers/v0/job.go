@@ -9,9 +9,9 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/otiai10/fastpot-api/filters"
-	"github.com/otiai10/fastpot-api/models"
-	"github.com/otiai10/fastpot-api/worker"
+	"github.com/otiai10/seqpod-api/filters"
+	"github.com/otiai10/seqpod-api/models"
+	"github.com/otiai10/seqpod-api/worker"
 	"github.com/otiai10/marmoset"
 )
 

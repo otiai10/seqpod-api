@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/otiai10/fastpot-api/models"
+	"github.com/otiai10/seqpod-api/models"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
