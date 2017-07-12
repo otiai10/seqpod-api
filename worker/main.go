@@ -2,7 +2,6 @@ package worker
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -54,10 +53,6 @@ func Enqueue(job *models.Job) {
 		return
 	}
 	img := "otiai10/daap-test"
-
-	fmt.Println("Resource.URL?", job.Resource.URL)
-	x, y := ioutil.ReadDir(job.Resource.URL)
-	fmt.Printf("%+v\n%+v\n", x, y)
 
 	arg := daap.Args{
 		Machine: machine,
