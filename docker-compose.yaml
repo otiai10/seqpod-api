@@ -12,6 +12,8 @@ services:
       - mongodb
     depends_on:
       - mongodb
+    volumes:
+      - ./secrets:/var/machine
     restart: unless-stopped
   mongodb:
     image: mongo:3.0
