@@ -9,10 +9,10 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/otiai10/marmoset"
 	"github.com/otiai10/seqpod-api/filters"
 	"github.com/otiai10/seqpod-api/models"
 	"github.com/otiai10/seqpod-api/worker"
-	"github.com/otiai10/marmoset"
 )
 
 // JobWorkspace create job workspace
@@ -69,7 +69,7 @@ func JobFastqUpload(w http.ResponseWriter, r *http.Request) {
 	// it should be something like S3 or any other storage services
 	// to make it persistent
 	if job.Resource.URL == "" {
-		job.Resource.URL = filepath.Join(os.TempDir(), id)
+		job.Resource.URL = filepath.Join("/var/app/works", id)
 	}
 	if err = os.MkdirAll(job.Resource.URL, os.ModePerm); err != nil {
 		render.JSON(http.StatusInternalServerError, marmoset.P{
