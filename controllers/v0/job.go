@@ -23,6 +23,9 @@ func JobWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	job := models.NewJob()
 
+	job.Resource.Reference = "GRCh37"
+	job.Workflow = []string{"otiai10/basic-wf"}
+
 	if err := models.Jobs(sess).Insert(job); err != nil {
 		render.JSON(http.StatusBadRequest, marmoset.P{
 			"message": err.Error(),

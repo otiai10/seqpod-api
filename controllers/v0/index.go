@@ -11,6 +11,6 @@ func Status(w http.ResponseWriter, r *http.Request) {
 	render := marmoset.Render(w)
 	render.JSON(http.StatusOK, marmoset.P{
 		"status":  "ok",
-		"version": "0.0.1",
+		"version": "0.0.7",
 	})
 }

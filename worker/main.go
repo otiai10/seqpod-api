@@ -30,7 +30,14 @@ func Enqueue(job *models.Job) {
 		logInternalError("DB SESSION", err)
 		return
 	}
-	defer session.Close()
+
+	defer func() {
+		if err := recover(); err != nil {
+			failed(session, job, fmt.Errorf("%v", err))
+		}
+		session.Close()
+	}()
+
 	c := models.Jobs(session)
 
 	if err = c.UpdateId(job.ID, bson.M{
@@ -60,7 +67,7 @@ func Enqueue(job *models.Job) {
 		fmt.Sprintf("REFERENCE=%s", "GRCh37.fa"),
 	}
 	for i, read := range job.Resource.Reads {
-		env = append(env, fmt.Sprintf("INPUT%02d=%s", i, read))
+		env = append(env, fmt.Sprintf("INPUT%02d=%s", i+1, read))
 	}
 
 	arg := daap.Args{
