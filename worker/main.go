@@ -79,6 +79,20 @@ func Enqueue(job *models.Job) {
 		return
 	}
 
+	out, err := ioutil.ReadAll(process.Stdout)
+	if err != nil {
+		failed(session, job, err)
+		return
+	}
+
+	err = models.Jobs(session).UpdateId(job.ID, bson.M{
+		"$set": bson.M{"stdout": string(out)},
+	})
+	if err != nil {
+		failed(session, job, err)
+		return
+	}
+
 	// TODO: Use "Salamander"
 	results, err := detectResultFiles(job)
 	if err != nil {

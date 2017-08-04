@@ -40,6 +40,7 @@ type Job struct {
 	StartedAt  *time.Time    `json:"started_at,omitempty"  bson:"started_at,omitempty"`
 	FinishedAt *time.Time    `json:"finished_at,omitempty" bson:"finished_at,omitempty"`
 	Errors     []string      `json:"errors"      bson:"errors"`
+	Stdout     string        `json:"stdout"      bson:"stdout"`
 }
 
 // Resource represents job resource
