@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -52,12 +53,21 @@ func Enqueue(job *models.Job) {
 		failed(session, job, err)
 		return
 	}
-	img := "otiai10/daap-test"
+	// img := "otiai10/daap-test"
+	img := "otiai10/basic-wf"
+
+	env := []string{
+		fmt.Sprintf("REFERENCE=%s", "GRCh37.fa"),
+	}
+	for i, read := range job.Resource.Reads {
+		env = append(env, fmt.Sprintf("INPUT%02d=%s", i, read))
+	}
 
 	arg := daap.Args{
 		Machine: machine,
 		Mounts: []daap.Mount{
 			daap.Volume(job.Resource.URL, "/var/data"),
+			daap.Volume(job.ReferenceDir(), "/var/refs"),
 		},
 	}
 

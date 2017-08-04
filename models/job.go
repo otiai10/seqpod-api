@@ -2,6 +2,7 @@ package models
 
 import (
 	"os"
+	"path/filepath"
 	"time"
 
 	mgo "gopkg.in/mgo.v2"
@@ -60,4 +61,9 @@ func NewJob() *Job {
 	}
 	job.Errors = []string{}
 	return job
+}
+
+// ReferenceDir ...
+func (job *Job) ReferenceDir() string {
+	return filepath.Join("/var/app/references", "GRCh37")
 }
