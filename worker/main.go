@@ -69,6 +69,7 @@ func Enqueue(job *models.Job) {
 			daap.Volume(job.Resource.URL, "/var/data"),
 			daap.Volume(job.ReferenceDir(), "/var/refs"),
 		},
+		Env: env,
 	}
 
 	process := daap.NewProcess(img, arg)
