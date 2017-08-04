@@ -92,9 +92,23 @@ func Enqueue(job *models.Job) {
 		failed(session, job, err)
 		return
 	}
+	serr, err := ioutil.ReadAll(process.Stderr)
+	if err != nil {
+		failed(session, job, err)
+		return
+	}
+	applog, err := ioutil.ReadAll(process.Log)
+	if err != nil {
+		failed(session, job, err)
+		return
+	}
 
 	err = models.Jobs(session).UpdateId(job.ID, bson.M{
-		"$set": bson.M{"stdout": string(out)},
+		"$set": bson.M{
+			"stdout": string(out),
+			"stderr": string(serr),
+			"applog": string(applog),
+		},
 	})
 	if err != nil {
 		failed(session, job, err)

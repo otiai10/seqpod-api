@@ -41,6 +41,8 @@ type Job struct {
 	FinishedAt *time.Time    `json:"finished_at,omitempty" bson:"finished_at,omitempty"`
 	Errors     []string      `json:"errors"      bson:"errors"`
 	Stdout     string        `json:"stdout"      bson:"stdout"`
+	Stderr     string        `json:"stderr"      bson:"stderr"`
+	Applog     string        `json:"applog"      bson:"applog"`
 	Workflow   []string      `json:"workflow"    bson:"workflow"`
 }
 
