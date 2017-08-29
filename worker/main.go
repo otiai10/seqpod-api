@@ -2,12 +2,12 @@ package worker
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/otiai10/daap"
@@ -191,16 +191,18 @@ func fetchMachineConfig() (*daap.MachineConfig, error) {
 	// This directory is binded by docker-copose, check docker-copose.yaml.
 	p := "/var/machine"
 
-	host, err := os.Open(filepath.Join(p, "host.txt"))
+	f, err := os.Open(filepath.Join(p, "config.json"))
 	if err != nil {
 		return nil, err
 	}
-	buf, err := ioutil.ReadAll(host)
-	if err != nil {
+	defer f.Close()
+	config := new(models.MachineConfig)
+	if err := json.NewDecoder(f).Decode(config); err != nil {
 		return nil, err
 	}
+
 	return &daap.MachineConfig{
-		Host:     strings.Trim(string(buf), " \n"),
-		CertPath: filepath.Join(p, "certs"),
+		Host:     fmt.Sprintf("tcp://%s:2376", config.Driver.IPAddress),
+		CertPath: p,
 	}, nil
 }
