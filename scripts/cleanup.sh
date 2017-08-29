@@ -18,7 +18,7 @@ checkCLI "docker-compose"
 echo "---> [0] OK 🍺"
 
 echo "[1] Stop dockers"
-docker-compose stop
+eval $(docker-machine env ${app}) && docker-compose stop
 echo "---> [1] OK 🍺"
 
 echo "[2] Remove machines"
