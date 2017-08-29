@@ -60,8 +60,11 @@ func Enqueue(job *models.Job) {
 		failed(session, job, err)
 		return
 	}
-	// img := "otiai10/daap-test"
-	img := "otiai10/basic-wf"
+	if len(job.Workflow) == 0 {
+		failed(session, job, fmt.Errorf("No any workflow specified"))
+		return
+	}
+	img := job.Workflow[0]
 
 	env := []string{
 		fmt.Sprintf("REFERENCE=%s", "GRCh37.fa"),
