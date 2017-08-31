@@ -25,6 +25,7 @@ func JobWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	job.Resource.Reference = "GRCh37"
 	job.Workflow = []string{
+		"otiai10/daap-test",
 		"otiai10/genomon-fisher",
 	}
 
@@ -173,4 +174,34 @@ func JobMarkReady(w http.ResponseWriter, r *http.Request) {
 	})
 
 	go worker.Enqueue(job)
+}
+
+// Download ...
+func Download(w http.ResponseWriter, r *http.Request) {
+	id := r.FormValue("id")
+	fname := r.FormValue("result")
+
+	fpath := filepath.Join("/var/app/works", id, fname)
+
+	_, err := os.Stat(fpath)
+	if err != nil {
+		render := marmoset.Render(w, true)
+		render.JSON(http.StatusOK, marmoset.P{
+			"id":     r.FormValue("id"),
+			"result": r.FormValue("result"),
+		})
+		return
+	}
+
+	f, err := os.Open(fpath)
+	if err != nil {
+		render := marmoset.Render(w, true)
+		render.JSON(http.StatusOK, marmoset.P{
+			"id":     r.FormValue("id"),
+			"result": r.FormValue("result"),
+		})
+		return
+	}
+
+	io.Copy(w, f)
 }

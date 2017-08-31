@@ -26,6 +26,8 @@ func init() {
 
 	unauthorized := marmoset.NewRouter()
 	unauthorized.GET("/v0/status", v0.Status)
+	// TODO: Make download endpoint authorized
+	unauthorized.GET("/v0/jobs/(?P<id>[0-9a-f]+)/results/(?P<result>[0-9a-zA-Z\\._-]+)", v0.Download)
 
 	authorized := marmoset.NewRouter()
 	authorized.GET("/v0/jobs/(?P<id>[0-9a-f]+)", v0.JobGet)
