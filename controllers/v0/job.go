@@ -25,7 +25,6 @@ func JobWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	job.Resource.Reference = "GRCh37"
 	job.Workflow = []string{
-		"otiai10/daap-test",
 		"otiai10/genomon-fisher",
 	}
 
