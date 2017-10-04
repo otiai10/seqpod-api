@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	_ "github.com/otiai10/seqpod-api/app"
+	_ "github.com/seqpod/seqpod-api/app"
 )
 
 // Get API Server Up!!

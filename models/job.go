@@ -64,6 +64,7 @@ func NewJob() *Job {
 		Extra: map[string]interface{}{},
 	}
 	job.Errors = []string{}
+	job.Workflow = []string{}
 	return job
 }
 

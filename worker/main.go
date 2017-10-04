@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/otiai10/daap"
-	"github.com/otiai10/seqpod-api/models"
+	"github.com/seqpod/seqpod-api/models"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

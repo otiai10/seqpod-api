@@ -10,9 +10,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/otiai10/marmoset"
-	"github.com/otiai10/seqpod-api/filters"
-	"github.com/otiai10/seqpod-api/models"
-	"github.com/otiai10/seqpod-api/worker"
+	"github.com/seqpod/seqpod-api/filters"
+	"github.com/seqpod/seqpod-api/models"
+	"github.com/seqpod/seqpod-api/worker"
 )
 
 // JobWorkspace create job workspace
