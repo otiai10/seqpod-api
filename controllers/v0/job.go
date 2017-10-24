@@ -1,6 +1,7 @@
 package v0
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -23,12 +24,15 @@ func JobWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	job := models.NewJob()
 
-	job.Resource.Reference = "GRCh37"
-	if wf := r.FormValue("workflow"); wf != "" {
-		job.Workflow = []string{wf}
-	} else {
-		job.Workflow = []string{"otiai10/genomon-fisher"}
+	// job.Resource.Reference = "GRCh37"
+	workflow := r.FormValue("workflow")
+	if workflow == "" {
+		render.JSON(http.StatusBadRequest, marmoset.P{
+			"message": fmt.Errorf("missing required value: `workflow`"),
+		})
+		return
 	}
+	job.Workflow = []string{workflow}
 
 	if err := models.Jobs(sess).Insert(job); err != nil {
 		render.JSON(http.StatusBadRequest, marmoset.P{
@@ -42,13 +46,13 @@ func JobWorkspace(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// JobFastqUpload ...
-func JobFastqUpload(w http.ResponseWriter, r *http.Request) {
+// JobInputUpload ...
+func JobInputUpload(w http.ResponseWriter, r *http.Request) {
 
 	render := marmoset.Render(w)
 	sess := filters.MongoSession(r)
 
-	f, h, err := r.FormFile("fastq")
+	f, h, err := r.FormFile("file")
 	if err != nil {
 		render.JSON(http.StatusBadRequest, marmoset.P{
 			"message": err.Error(),
@@ -78,13 +82,17 @@ func JobFastqUpload(w http.ResponseWriter, r *http.Request) {
 	if job.Resource.URL == "" {
 		job.Resource.URL = filepath.Join("/var/app/works", id)
 	}
-	if err = os.MkdirAll(job.Resource.URL, os.ModePerm); err != nil {
+
+	// Make sure inputs directory exists.
+	if err = os.MkdirAll(filepath.Join(job.Resource.URL, "in"), os.ModePerm); err != nil {
 		render.JSON(http.StatusInternalServerError, marmoset.P{
 			"message": err.Error(),
 		})
 		return
 	}
-	destpath := filepath.Join(job.Resource.URL, h.Filename)
+	destpath := filepath.Join(job.Resource.URL, "in", h.Filename)
+
+	// Create input physical file.
 	destfile, err := os.Create(destpath)
 	if err != nil {
 		render.JSON(http.StatusInternalServerError, marmoset.P{
@@ -92,18 +100,24 @@ func JobFastqUpload(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	// Copy uploaded buffer to physical file.
 	if _, err = io.Copy(destfile, f); err != nil {
 		render.JSON(http.StatusInternalServerError, marmoset.P{
 			"message": err.Error(),
 		})
 		return
 	}
+
 	// }}}
 
+	name := r.FormValue("name")
 	// Save uploaded files
 	change := bson.M{
-		"$push": bson.M{"resource.reads": h.Filename},
-		"$set":  bson.M{"resource.url": job.Resource.URL},
+		"$set": bson.M{
+			fmt.Sprintf("resource.inputs.%s", name): h.Filename,
+			"resource.url":                          job.Resource.URL,
+		},
 	}
 	if err := models.Jobs(sess).UpdateId(bson.ObjectIdHex(id), change); err != nil {
 		render.JSON(http.StatusInternalServerError, marmoset.P{

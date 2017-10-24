@@ -2,7 +2,6 @@ package models
 
 import (
 	"os"
-	"path/filepath"
 	"time"
 
 	mgo "gopkg.in/mgo.v2"
@@ -50,7 +49,7 @@ type Job struct {
 type Resource struct {
 	URL       string                 `json:"url"       bson:"url"`
 	Reference string                 `json:"reference" bson:"reference"`
-	Reads     []string               `json:"reads"     bson:"reads"`
+	Inputs    map[string]string      `json:"inputs"    bson:"inputs"`
 	Extra     map[string]interface{} `json:"extra,omitempty" bson:"extra,omitempty"`
 }
 
@@ -60,15 +59,10 @@ func NewJob() *Job {
 	job.ID = bson.NewObjectId()
 	job.CreatedAt = time.Now()
 	job.Resource = Resource{
-		Reads: []string{},
-		Extra: map[string]interface{}{},
+		Inputs: map[string]string{},
+		Extra:  map[string]interface{}{},
 	}
 	job.Errors = []string{}
 	job.Workflow = []string{}
 	return job
-}
-
-// ReferenceDir ...
-func (job *Job) ReferenceDir() string {
-	return filepath.Join("/var/app/references", "GRCh37")
 }

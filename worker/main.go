@@ -69,15 +69,18 @@ func Enqueue(job *models.Job) {
 	env := []string{
 		fmt.Sprintf("REFERENCE=%s", "GRCh37.fa"),
 	}
-	for i, read := range job.Resource.Reads {
-		env = append(env, fmt.Sprintf("INPUT%02d=%s", i+1, read))
+	for key, input := range job.Resource.Inputs {
+		env = append(env, fmt.Sprintf("%s=%s", key, input))
 	}
+
+	// Ensure outputs directory exsits.
+	os.MkdirAll(filepath.Join(job.Resource.URL, "out"), os.ModePerm)
 
 	arg := daap.Args{
 		Machine: machine,
 		Mounts: []daap.Mount{
+			// Mount inputs and outpus directory.
 			daap.Volume(job.Resource.URL, "/var/data"),
-			daap.Volume(job.ReferenceDir(), "/var/refs"),
 		},
 		Env: env,
 	}
@@ -160,24 +163,12 @@ func logInternalError(prefix string, err error) {
 //       to place evetything on S3 buckets.
 func detectResultFiles(job *models.Job) ([]string, error) {
 
-	inArrayString := func(target string, list []string) bool {
-		for _, e := range list {
-			if target == e {
-				return true
-			}
-		}
-		return false
-	}
-
-	files, err := ioutil.ReadDir(job.Resource.URL)
+	files, err := ioutil.ReadDir(filepath.Join(job.Resource.URL, "out"))
 	if err != nil {
 		return nil, err
 	}
 	results := []string{}
 	for _, f := range files {
-		if inArrayString(f.Name(), job.Resource.Reads) {
-			continue
-		}
 		results = append(results, f.Name())
 	}
 
