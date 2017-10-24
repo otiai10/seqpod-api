@@ -31,18 +31,19 @@ func Jobs(session *mgo.Session) *mgo.Collection {
 
 // Job represents job
 type Job struct {
-	ID         bson.ObjectId `json:"_id"         bson:"_id"`
-	Resource   Resource      `json:"resource"    bson:"resource"`
-	Results    []string      `json:"results"     bson:"results"`
-	Status     Status        `json:"status"      bson:"status"`
-	CreatedAt  time.Time     `json:"created_at"  bson:"created_at"`
-	StartedAt  *time.Time    `json:"started_at,omitempty"  bson:"started_at,omitempty"`
-	FinishedAt *time.Time    `json:"finished_at,omitempty" bson:"finished_at,omitempty"`
-	Errors     []string      `json:"errors"      bson:"errors"`
-	Stdout     string        `json:"stdout"      bson:"stdout"`
-	Stderr     string        `json:"stderr"      bson:"stderr"`
-	Applog     string        `json:"applog"      bson:"applog"`
-	Workflow   []string      `json:"workflow"    bson:"workflow"`
+	ID         bson.ObjectId     `json:"_id"         bson:"_id"`
+	Resource   Resource          `json:"resource"    bson:"resource"`
+	Results    []string          `json:"results"     bson:"results"`
+	Status     Status            `json:"status"      bson:"status"`
+	CreatedAt  time.Time         `json:"created_at"  bson:"created_at"`
+	StartedAt  *time.Time        `json:"started_at,omitempty"  bson:"started_at,omitempty"`
+	FinishedAt *time.Time        `json:"finished_at,omitempty" bson:"finished_at,omitempty"`
+	Errors     []string          `json:"errors"      bson:"errors"`
+	Stdout     string            `json:"stdout"      bson:"stdout"`
+	Stderr     string            `json:"stderr"      bson:"stderr"`
+	Applog     string            `json:"applog"      bson:"applog"`
+	Workflow   []string          `json:"workflow"    bson:"workflow"`
+	Parameters map[string]string `json:"parameters"  bson:"parameters"`
 }
 
 // Resource represents job resource
@@ -64,5 +65,6 @@ func NewJob() *Job {
 	}
 	job.Errors = []string{}
 	job.Workflow = []string{}
+	job.Parameters = map[string]string{}
 	return job
 }

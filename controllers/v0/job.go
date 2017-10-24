@@ -1,6 +1,7 @@
 package v0
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,6 +17,20 @@ import (
 	"github.com/seqpod/seqpod-api/worker"
 )
 
+// WorkflowRequest ...
+type WorkflowRequest struct {
+	Self struct {
+		Registry []struct {
+			Service   string `json:"service"`
+			Namespace string `json:"namespace"`
+		} `json:"registry"`
+	} `json:"self"`
+	Parameters map[string]struct {
+		Default interface{} `json:"default"`
+		Value   *string     `json:"value"`
+	} `json:"parameters"`
+}
+
 // JobWorkspace create job workspace
 func JobWorkspace(w http.ResponseWriter, r *http.Request) {
 
@@ -24,15 +39,36 @@ func JobWorkspace(w http.ResponseWriter, r *http.Request) {
 
 	job := models.NewJob()
 
-	// job.Resource.Reference = "GRCh37"
-	workflow := r.FormValue("workflow")
-	if workflow == "" {
+	workflow := new(WorkflowRequest)
+	defer r.Body.Close()
+
+	if err := json.NewDecoder(r.Body).Decode(workflow); err != nil {
 		render.JSON(http.StatusBadRequest, marmoset.P{
-			"message": fmt.Errorf("missing required value: `workflow`"),
+			"message": err.Error(),
 		})
 		return
 	}
-	job.Workflow = []string{workflow}
+
+	// job.Resource.Reference = "GRCh37"
+	if len(workflow.Self.Registry) == 0 {
+		render.JSON(http.StatusBadRequest, marmoset.P{
+			"message": fmt.Errorf("missing required value: `workflow`").Error(),
+		})
+		return
+	}
+	job.Workflow = []string{workflow.Self.Registry[0].Namespace}
+
+	for key, param := range workflow.Parameters {
+		if param.Value != nil {
+			job.Parameters[key] = *param.Value
+		} else {
+			job.Parameters[key] = fmt.Sprintf("%v", param.Default)
+		}
+	}
+
+	if job.Resource.URL == "" {
+		job.Resource.URL = filepath.Join("/var/app/works", job.ID.Hex())
+	}
 
 	if err := models.Jobs(sess).Insert(job); err != nil {
 		render.JSON(http.StatusBadRequest, marmoset.P{

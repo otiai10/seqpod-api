@@ -72,6 +72,9 @@ func Enqueue(job *models.Job) {
 	for key, input := range job.Resource.Inputs {
 		env = append(env, fmt.Sprintf("%s=%s", key, input))
 	}
+	for key, param := range job.Parameters {
+		env = append(env, fmt.Sprintf("%s=%s", key, param))
+	}
 
 	// Ensure outputs directory exsits.
 	os.MkdirAll(filepath.Join(job.Resource.URL, "out"), os.ModePerm)
