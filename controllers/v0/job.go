@@ -232,7 +232,7 @@ func Download(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("id")
 	fname := r.FormValue("result")
 
-	fpath := filepath.Join("/var/app/works", id, fname)
+	fpath := filepath.Join("/var/app/works", id, "out", fname)
 
 	_, err := os.Stat(fpath)
 	if err != nil {
